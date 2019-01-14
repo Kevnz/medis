@@ -3,29 +3,29 @@ const path = require('path')
 const pkg = require('../package')
 const flat = require('electron-osx-sign').flat
 
+const resourcesPath = path.join(__dirname, '..', 'resources')
+
 packager({
   dir: path.join(__dirname, '..'),
-  appCopyright: '© 2017, Zihua Li',
+  appCopyright: '© 2019, Kevin Isom',
   asar: true,
   overwrite: true,
   electronVersion: pkg.electronVersion,
-  icon: path.join(__dirname, '..', 'icns', 'MyIcon'),
-  out: path.join(__dirname, '..', 'out'),
+  icon: path.join(resourcesPath, 'icns', 'MyIcon'),
+  out: path.join(__dirname, '..', 'dist', 'out'),
   platform: 'mas',
-  appBundleId: `li.zihua.${pkg.name}`,
+  appBundleId: `isom.kevin.${pkg.name}`,
   appCategoryType: 'public.app-category.developer-tools',
   osxSign: {
     type: process.env.NODE_ENV === 'production' ? 'distribution' : 'development',
-    entitlements: path.join(__dirname, '..', 'parent.plist'),
-    'entitlements-inherit': path.join(__dirname, '..', 'child.plist')
-  }
-}, function (err, res) {
-  if (err) {
-    throw err;
+    entitlements: path.join(resourcesPath, 'parent.plist'),
+    'entitlements-inherit': path.join(resourcesPath, 'child.plist')
   }
 
+}).then((res) => {
   const app = path.join(res[0], `${pkg.productName}.app`)
   console.log('flating...', app)
+  process.exit(0);
   flat({ app }, function done (err) {
     if (err) {
       throw err
